@@ -3,11 +3,16 @@ import { DropdownItem } from 'reactstrap';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { NavLink as Link } from 'react-router-dom';
 import { Translate, translate } from 'react-jhipster';
-import { getLoginUrl } from 'app/shared/util/url-utils';
 import { NavDropdown } from '../header-components';
 
 const accountMenuItemsAuthenticated = (
   <>
+    <DropdownItem tag={Link} to="/account/settings">
+      <FontAwesomeIcon icon="wrench" /> <Translate contentKey="global.menu.account.settings" />
+    </DropdownItem>
+    <DropdownItem tag={Link} to="/account/password">
+      <FontAwesomeIcon icon="clock" /> <Translate contentKey="global.menu.account.password" />
+    </DropdownItem>
     <DropdownItem tag={Link} to="/logout">
       <FontAwesomeIcon icon="sign-out-alt" /> <Translate contentKey="global.menu.account.logout" />
     </DropdownItem>
@@ -16,8 +21,11 @@ const accountMenuItemsAuthenticated = (
 
 const accountMenuItems = (
   <>
-    <DropdownItem id="login-item" tag="a" href={getLoginUrl()}>
+    <DropdownItem id="login-item" tag={Link} to="/login">
       <FontAwesomeIcon icon="sign-in-alt" /> <Translate contentKey="global.menu.account.login" />
+    </DropdownItem>
+    <DropdownItem tag={Link} to="/register">
+      <FontAwesomeIcon icon="sign-in-alt" /> <Translate contentKey="global.menu.account.register" />
     </DropdownItem>
   </>
 );

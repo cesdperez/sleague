@@ -5,7 +5,7 @@ import sinon from 'sinon';
 import configureStore from 'redux-mock-store';
 import promiseMiddleware from 'redux-promise-middleware';
 
-import authentication, { ACTION_TYPES, getSession } from 'app/shared/reducers/authentication';
+import authentication, { ACTION_TYPES, getSession, login } from 'app/shared/reducers/authentication';
 
 describe('Authentication reducer tests', () => {
   function isAccountEmpty(state): boolean {
@@ -19,13 +19,37 @@ describe('Authentication reducer tests', () => {
         loading: false,
         isAuthenticated: false,
         errorMessage: null, // Errors returned from server side
+        loginSuccess: false,
+        loginError: false, // Errors returned from server side
+        showModalLogin: false,
         redirectMessage: null
       });
       expect(isAccountEmpty(toTest));
     });
   });
 
+  describe('Requests', () => {
+    it('should detect a request', () => {
+      expect(authentication(undefined, { type: REQUEST(ACTION_TYPES.LOGIN) })).toMatchObject({
+        loading: true
+      });
+      expect(authentication(undefined, { type: REQUEST(ACTION_TYPES.GET_SESSION) })).toMatchObject({
+        loading: true
+      });
+    });
+  });
+
   describe('Success', () => {
+    it('should detect a success on login', () => {
+      const toTest = authentication(undefined, { type: SUCCESS(ACTION_TYPES.LOGIN) });
+      expect(toTest).toMatchObject({
+        loading: false,
+        loginError: false,
+        loginSuccess: true,
+        showModalLogin: false
+      });
+    });
+
     it('should detect a success on get session and be authenticated', () => {
       const payload = { data: { activated: true } };
       const toTest = authentication(undefined, { type: SUCCESS(ACTION_TYPES.GET_SESSION), payload });
@@ -48,6 +72,18 @@ describe('Authentication reducer tests', () => {
   });
 
   describe('Failure', () => {
+    it('should detect a failure on login', () => {
+      const payload = 'Something happened.';
+      const toTest = authentication(undefined, { type: FAILURE(ACTION_TYPES.LOGIN), payload });
+
+      expect(toTest).toMatchObject({
+        errorMessage: payload,
+        showModalLogin: true,
+        loginError: true
+      });
+      expect(isAccountEmpty(toTest));
+    });
+
     it('should detect a failure', () => {
       const payload = 'Something happened.';
       const toTest = authentication(undefined, { type: FAILURE(ACTION_TYPES.GET_SESSION), payload });
@@ -55,6 +91,7 @@ describe('Authentication reducer tests', () => {
       expect(toTest).toMatchObject({
         loading: false,
         isAuthenticated: false,
+        showModalLogin: true,
         errorMessage: payload
       });
       expect(isAccountEmpty(toTest));
@@ -67,6 +104,9 @@ describe('Authentication reducer tests', () => {
       expect(toTest).toMatchObject({
         loading: false,
         isAuthenticated: false,
+        loginSuccess: false,
+        loginError: false,
+        showModalLogin: true,
         errorMessage: null,
         redirectMessage: null
       });
@@ -79,6 +119,9 @@ describe('Authentication reducer tests', () => {
       expect(toTest).toMatchObject({
         loading: false,
         isAuthenticated: false,
+        loginSuccess: false,
+        loginError: false,
+        showModalLogin: true,
         errorMessage: null,
         redirectMessage: message
       });
@@ -90,6 +133,7 @@ describe('Authentication reducer tests', () => {
       const toTest = authentication(undefined, { type: ACTION_TYPES.CLEAR_AUTH, message });
       expect(toTest).toMatchObject({
         loading: false,
+        showModalLogin: true,
         isAuthenticated: false
       });
     });

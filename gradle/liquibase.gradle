@@ -49,7 +49,6 @@ def liquibaseCommand(command) {
         args "--url=jdbc:h2:file:./build/h2db/db/sleague"
         args "--driver=org.h2.Driver"
         args command
-        args "--excludeObjects=oauth_access_token, oauth_approvals, oauth_client_details, oauth_client_token, oauth_code, oauth_refresh_token"
     }
 }
 

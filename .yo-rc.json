@@ -10,7 +10,7 @@
     "packageName": "io.checho.sleague",
     "packageFolder": "io/checho/sleague",
     "serverPort": "8080",
-    "authenticationType": "oauth2",
+    "authenticationType": "jwt",
     "cacheProvider": "ehcache",
     "enableHibernateCache": true,
     "websocket": false,
